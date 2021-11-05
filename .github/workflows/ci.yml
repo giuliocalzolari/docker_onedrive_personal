@@ -2,16 +2,18 @@ name: 'build'
 
 on:
   push:
+    tags:
+      - *
     branches:
     - master
   pull_request:
 
-  workflow_dispatch:
-    inputs:
-      tag:
-        description: 'Docker tags'
-        required: true
-        default: "latest"
+  # workflow_dispatch:
+  #   inputs:
+  #     tag:
+  #       description: 'Docker tags'
+  #       required: true
+  #       default: "latest"
 
 jobs:
   build:
@@ -20,11 +22,6 @@ jobs:
     steps:
       - name: "checkout"
         uses: actions/checkout@v2
-
-      # - name: Setup GitHub Container Registry
-      #   run: echo $CR_PAT | docker login ghcr.io -u ${GITHUB_ACTOR} --password-stdin
-      #   env:
-      #     CR_PAT: ${{ secrets.PAT }}
 
       # - name: Build and Push image
       #   run: |
@@ -41,11 +38,6 @@ jobs:
       #     docker image ls
       #     docker push $IMAGE_ID:$VERSION
 
-    # - name: build Image
-    #   run: |
-    #     echo $CR_PAT | docker login ghcr.io -u ${GITHUB_ACTOR} --password-stdin
-    #   env:
-    #     CR_PAT: ${{ secrets.PAT }}
 
       - name: Login to Github Packages
         uses: docker/login-action@v1
@@ -67,20 +59,3 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-
-    #   - name: Build and push
-    #     uses: docker/build-push-action@v2
-    #     with:
-    #       push: true
-    #       tags: |
-    #         ghcr.io/${GITHUB_REPOSITORY}:latest
-
-
-      # - name: 'Build dockerimage'
-      #   uses: docker/build-push-action@v2
-      #   with:
-      #     registry: ghcr.io
-      #     username: "${GITHUB_ACTOR}"
-      #     password: ${{ secrets.PAT }}
-      #     repository: ${GITHUB_ACTOR}/${{ github.event.repository.name }}
-      #     tags: "${{ github.event.inputs.tag }}"
