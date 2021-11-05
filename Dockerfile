@@ -4,8 +4,8 @@ RUN apt update \
     && apt install python3-pip -y \
     && pip --version
 
-RUN python -m pip install --upgrade pip \
-    && python -m pip install --upgrade selenium onedrivesdk==1.1.8 requests python-dateutil pyotp
+RUN pip install --upgrade pip \
+    && pip install --upgrade selenium onedrivesdk==1.1.8 requests python-dateutil pyotp
 
 RUN  wget -q https://chromedriver.storage.googleapis.com/94.0.4606.61/chromedriver_linux64.zip \
     && unzip chromedriver_linux64.zip \
