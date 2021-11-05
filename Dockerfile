@@ -1,7 +1,7 @@
 FROM ubuntu:20.04
 
 RUN apt update \
-    && apt install python3-pip \
+    && apt install python3-pip -y \
     && pip --version
 
 RUN python -m pip install --upgrade pip \
