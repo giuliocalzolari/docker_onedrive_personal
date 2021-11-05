@@ -11,7 +11,6 @@ RUN  wget -q https://chromedriver.storage.googleapis.com/94.0.4606.61/chromedriv
     && mv chromedriver /usr/local/bin/chromedriver \
     && rm chromedriver_linux64.zip
 
-RUN chromedriver --version
 ENTRYPOINT ["/bin/bash"]
 
 
