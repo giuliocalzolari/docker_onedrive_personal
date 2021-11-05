@@ -1,7 +1,7 @@
 FROM ubuntu:20.04
 
 RUN apt update \
-    && apt install python3-pip wget -y \
+    && apt install python3-pip wget unzip -y \
     && pip --version
 
 RUN pip install --upgrade selenium onedrivesdk==1.1.8 requests python-dateutil pyotp
