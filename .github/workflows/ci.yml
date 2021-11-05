@@ -28,6 +28,9 @@ jobs:
           username: ${GITHUB_ACTOR}
           password: ${{ secrets.PAT }}
 
+      - name: Image digest
+        run: echo "build ghcr.io/${GITHUB_REPOSITORY}:latest"
+
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
