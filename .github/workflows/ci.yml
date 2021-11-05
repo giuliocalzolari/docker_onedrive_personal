@@ -21,25 +21,25 @@ jobs:
       - name: "checkout"
         uses: actions/checkout@v2
 
-      - name: Setup GitHub Container Registry
-        run: echo $CR_PAT | docker login ghcr.io -u ${GITHUB_ACTOR} --password-stdin
-        env:
-          CR_PAT: ${{ secrets.PAT }}
+      # - name: Setup GitHub Container Registry
+      #   run: echo $CR_PAT | docker login ghcr.io -u ${GITHUB_ACTOR} --password-stdin
+      #   env:
+      #     CR_PAT: ${{ secrets.PAT }}
 
-      - name: Build and Push image
-        run: |
-          IMAGE_ID=ghcr.io/${GITHUB_REPOSITORY}
-          # Strip git ref prefix from version
-          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-          # Strip "v" prefix from tag name
-          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
-          # Use Docker `latest` tag convention
-          [ "$VERSION" == "master" ] && VERSION=latest
-          echo IMAGE_ID=$IMAGE_ID
-          echo VERSION=$VERSION
-          docker build -t $IMAGE_ID:$VERSION .
-          docker image ls
-          docker push $IMAGE_ID:$VERSION
+      # - name: Build and Push image
+      #   run: |
+      #     IMAGE_ID=ghcr.io/${GITHUB_REPOSITORY}
+      #     # Strip git ref prefix from version
+      #     VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+      #     # Strip "v" prefix from tag name
+      #     [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+      #     # Use Docker `latest` tag convention
+      #     [ "$VERSION" == "master" ] && VERSION=latest
+      #     echo IMAGE_ID=$IMAGE_ID
+      #     echo VERSION=$VERSION
+      #     docker build -t $IMAGE_ID:$VERSION .
+      #     docker image ls
+      #     docker push $IMAGE_ID:$VERSION
 
     # - name: build Image
     #   run: |
@@ -47,16 +47,26 @@ jobs:
     #   env:
     #     CR_PAT: ${{ secrets.PAT }}
 
-    #   - name: Login to Github Packages
-    #     uses: docker/login-action@v1
-    #     with:
-    #       registry: ghcr.io
-    #       username: ${GITHUB_ACTOR}
-    #       password: ${{ secrets.PAT }}
+      - name: Login to Github Packages
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${GITHUB_ACTOR}
+          password: ${{ secrets.PAT }}
 
-    #   - name: Image digest
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@3
+        with:
+          images: ghcr.io/${{ github.repository }}
 
-    #     run: echo "build ghcr.io/${GITHUB_REPOSITORY}:latest"
+      - name: Build and push Docker images
+        uses: docker/build-push-action@2
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 
     #   - name: Build and push
     #     uses: docker/build-push-action@v2
